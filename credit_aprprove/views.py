@@ -38,7 +38,7 @@ def register_customer(request):
             "customer_id": customer.id,
             "name": f"{customer.first_name} {customer.last_name}",
             "age": data["age"],
-            "monthly_salary": data["monthly_income"],
+            "monthly_income": data["monthly_income"],
             "approved_limit": approved_limit,
             "phone_number": customer.phone_number,
         },
@@ -145,7 +145,6 @@ def evaluate_loan(customer_id, interest_rate, loan_amount, tenure):
         "corrected_interest_rate": corrected_interest,
         "monthly_installment": round(EMI, 2) if EMI else None,
         "score": score,
-        "message": "Loan approved" if approval else "Loan rejected due to credit score",
     }
 
 
@@ -178,7 +177,10 @@ def check_eligibility(request):
 
     result = evaluate_loan(customer_id, interest_rate, loan_amount, tenure)
     if not result["approval"]:
-        return Response({"approval": result["approval"], "message": result["message"]})
+        return Response(
+            {"approval": result["approval"], "message": result["message"]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     if "corrected_interest_rate" not in result:
         return Response(
@@ -202,7 +204,6 @@ def check_eligibility(request):
             "corrected_interest_rate": result["corrected_interest_rate"],
             "tenure": tenure,
             "monthly_installment": result["monthly_installment"],
-            "message": result.get("message"),
         },
         status=status.HTTP_200_OK,
     )
@@ -221,9 +222,9 @@ def create_loan(request):
         return Response(
             {
                 "loan_id": None,
-                "customer_id": customer_id,
+                "customer_id": None,
                 "loan_approved": False,
-                "message": result["message"],
+                "message": "Loan was not approved Successfully",
                 "monthly_installment": None,
             }
         )
