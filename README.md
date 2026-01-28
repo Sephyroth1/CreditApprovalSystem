@@ -44,6 +44,11 @@ The API will be available at:
 http://localhost:8000
 ```
 
+### **⚠ Port Requirements:**
+- Port 5432 must be free (PostgreSQL)
+- Port 8000 must be free (Web server)
+(Other wise it will give an error saying 5432 or 8000 is not allocated)
+
 ## Running Tests
 To run unit tests:
 ```bash
